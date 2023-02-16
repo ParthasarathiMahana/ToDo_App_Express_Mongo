@@ -9,6 +9,9 @@ app.set("views", path.join(__dirname,"views"));
 app.use(express.static("assets"));
 app.use(express.urlencoded());
 
+const db = require("./config/mongoose");
+const model = require("./models/tasks");
+
 // dummy data to display
 var todo_list = [
     {
@@ -21,36 +24,76 @@ var todo_list = [
 
 app.get('/', function(req, res)
 {
-    res.render('home', {
-        todo_list: todo_list
+    model.find({}, function(err, task){
+        if(err)
+        {
+            console.log(err);
+            return;
+        }
+
+        return res.render('home',{
+            todo_list: task
+        });
     });
 });
 
 app.post("/form_input", function(req, res){
-    todo_list.push(req.body);
-
+    // todo_list.push(req.body);
     // console.log(req.body);
-    return res.render('home',{
-        todo_list : todo_list
+    model.create({
+        description: req.body.description,
+        type: req.body.Category,
+        due_date: req.body.due_date
+    },function(err){
+        if(err)
+        {
+            console.log(err);
+            return;
+        }
+
+        model.find({}, function(err, task){
+            if(err)
+            {
+                console.log(err);
+                return;
+            }
+    
+            return res.render('home',{
+                todo_list: task
+            });
+        });
     });
+    // console.log(req.body);
 });
 
 app.get('/deleteTask', function(req, res){
-    for (var i=0; i<todo_list.length; i++)
-    {
-        if(i == req.query.task)
+    // for (var i=0; i<todo_list.length; i++)
+    // {
+    //     if(i == req.query.task)
+    //     {
+    //         todo_list.splice(i, 1);
+    //     }
+    // }
+    // console.log(req.query.task);
+    model.findByIdAndDelete(req.query.task, function(err){
+        if(err)
         {
-            todo_list.splice(i, 1);
+            console.log(err);
+            return;
         }
-    }
 
-    return res.render("home", {
-        todo_list: todo_list
-    })
-});
-
-app.get("/checked/?check=checked", function(req, res){
-    console.log(req.query.check);
+        model.find({}, function(err, task){
+            if(err)
+            {
+                console.log(err);
+                return;
+            }
+    
+            return res.render('home',{
+                todo_list: task
+            });
+        });
+    });
 });
 
 app.listen(port, function(err)

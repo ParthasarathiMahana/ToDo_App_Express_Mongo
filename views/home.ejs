@@ -41,7 +41,7 @@
                                 <%= todo_list[i].Category%><br>
                             </div>
                             <div id="cross">
-                                <a href="/deleteTask/?task=<%=i%>"><button type="submit"><i class="fa-solid fa-xmark"></i></button></a>
+                                <a href="/deleteTask/?task=<%= todo_list[i].id%>"><button type="submit"><i class="fa-solid fa-xmark"></i></button></a>
                             </div>
                         </div>
                     </div>
