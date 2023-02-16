@@ -49,6 +49,10 @@ app.get('/deleteTask', function(req, res){
     })
 });
 
+app.get("/checked/?check=checked", function(req, res){
+    console.log(req.query.check);
+});
+
 app.listen(port, function(err)
 {
     if(err)
